@@ -27,8 +27,8 @@ describe('The javascript parser', () => {
     it('is tabling simple For Statement with {} String', () => { // 4
         assert.equal(
             getTable(parseCode('for(var i=0;i<5;i++){\n' +
-                '}')),
-            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>For Statement</td><td></td><td>i< 5</td><td></td></tr></table>'
+                'i=i+1}')),
+            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>For Statement</td><td></td><td>i< 5</td><td></td></tr><tr><td>2</td><td>Assignment Expression</td><td>i</td><td></td><td>i+ 1</td></tr></table>'
         );
     });
 
@@ -83,15 +83,14 @@ describe('The javascript parser', () => {
 
     it('is tabling complex if statement String', () => { // 10
         assert.equal(
-            getTable(parseCode('if(5>7)\n' +
-                '{\n' +
-                'x=x+x\n' +
+            getTable(parseCode('if(5>7){\n' +
+                'x=x+x;\n' +
                 '}\n' +
                 'else\n' +
                 '{\n' +
-                'x=x+1\n' +
+                'x=(1+2)+(3+4)\n' +
                 '}')),
-            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>If Statement</td><td></td><td>5> 7</td><td></td></tr><tr><td>3</td><td>Assignment Expression</td><td>x</td><td></td><td>x+ x</td></tr><tr><td>6</td><td>Else Statement</td><td></td><td></td><td></td></tr><tr><td>7</td><td>Assignment Expression</td><td>x</td><td></td><td>x+ 1</td></tr></table>'
+            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>If Statement</td><td></td><td>5> 7</td><td></td></tr><tr><td>2</td><td>Assignment Expression</td><td>x</td><td></td><td>x+ x</td></tr><tr><td>5</td><td>Else Statement</td><td></td><td></td><td></td></tr><tr><td>6</td><td>Assignment Expression</td><td>x</td><td></td><td>1+ 2+ 3+ 4</td></tr></table>'
         );
     });
 
@@ -189,6 +188,20 @@ describe('The javascript parser', () => {
         assert.equal(
             getTable(parseCode('function b(){ return Mid[i+5]; }')),
             '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>Function Declaration</td><td>b</td><td></td><td></td></tr><tr><td>1</td><td>Return Statement</td><td></td><td></td><td>Mid[i+ 5]</td></tr></table>'
+        );
+    });
+    it('is tabling return with special #3 [] String', () => { // 20
+        assert.equal(
+            getTable(parseCode('num = Mid[1+1]+3+4+Mid[1];\n' +
+                'num = Mid[i]+3+4+5;\n' +
+                'num = Mid[1]+3+4+5;')),
+            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>Assignment Expression</td><td>num</td><td></td><td>Mid[1+ 1]+ 3+ 4+ Mid[1]</td></tr><tr><td>2</td><td>Assignment Expression</td><td>num</td><td></td><td>Mid[i]+ 3+ 4+ 5</td></tr><tr><td>3</td><td>Assignment Expression</td><td>num</td><td></td><td>Mid[1]+ 3+ 4+ 5</td></tr></table>'
+        );
+    });
+    it('is tabling declaration expert', () => { // 21
+        assert.equal(
+            getTable(parseCode('let x=1+1,y=-1,z=w;')),
+            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>Variable Declaration</td><td>x</td><td></td><td>1+ 1</td></tr><tr><td>1</td><td>Variable Declaration</td><td>y</td><td></td><td>-1</td></tr><tr><td>1</td><td>Variable Declaration</td><td>z</td><td></td><td>w</td></tr></table>'
         );
     });
 });

@@ -56,7 +56,7 @@ const bodyResender2 =(parsedCode)=>
     else if (parsedCode['type'] === 'ReturnStatement') {
         returnStatementFinder(parsedCode);
     }
-    else if (parsedCode['type'] === 'ForStatement') {
+    else /*if (parsedCode['type'] === 'ForStatement') */{
         forStatementFinder(parsedCode);
     }
 };
@@ -138,9 +138,9 @@ const elseIfStatementFinder =(parsedCode)=>
 
 const expressionStatementFinder=(parsedCode)=>
 {
-    if(parsedCode['expression']['type']==='AssignmentExpression'){
-        assigmentExpressionFinder(parsedCode['expression']);
-    }
+    /*if(parsedCode['expression']['type']==='AssignmentExpression'){*/
+    assigmentExpressionFinder(parsedCode['expression']);
+    /*}*/
 };
 
 const assigmentExpressionFinder= (parsedCode)=>
