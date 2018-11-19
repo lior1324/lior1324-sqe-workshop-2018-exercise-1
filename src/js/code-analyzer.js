@@ -56,7 +56,7 @@ const bodyResender2 =(parsedCode)=>
     else if (parsedCode['type'] === 'ReturnStatement') {
         returnStatementFinder(parsedCode);
     }
-    else /*if (parsedCode['type'] === 'ForStatement') */{
+    if (parsedCode['type'] === 'ForStatement') {
         forStatementFinder(parsedCode);
     }
 };
