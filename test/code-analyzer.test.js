@@ -204,4 +204,11 @@ describe('The javascript parser', () => {
             '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>Variable Declaration</td><td>x</td><td></td><td>1+ 1</td></tr><tr><td>1</td><td>Variable Declaration</td><td>y</td><td></td><td>-1</td></tr><tr><td>1</td><td>Variable Declaration</td><td>z</td><td></td><td>w</td></tr></table>'
         );
     });
+
+    it('is tabling unary hard', () => { // 21
+        assert.equal(
+            getTable(parseCode('let x=-(1+1),y=-n,z=-1,a=-M[1],b=-M[1+1],c=-M[n];')),
+            '<table border="1"><tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr><tr><td>1</td><td>Variable Declaration</td><td>x</td><td></td><td>-(1+ 1)</td></tr><tr><td>1</td><td>Variable Declaration</td><td>y</td><td></td><td>-n</td></tr><tr><td>1</td><td>Variable Declaration</td><td>z</td><td></td><td>-1</td></tr><tr><td>1</td><td>Variable Declaration</td><td>a</td><td></td><td>-M[1]</td></tr><tr><td>1</td><td>Variable Declaration</td><td>b</td><td></td><td>-M[1+ 1]</td></tr><tr><td>1</td><td>Variable Declaration</td><td>c</td><td></td><td>-M[n]</td></tr></table>'
+        );
+    });
 });

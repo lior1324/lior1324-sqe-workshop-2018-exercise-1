@@ -86,7 +86,7 @@ const returnStatementFinder =(parsedCode)=> {
     else if (parsedCode['argument']['type'] === 'Identifier') {
         returnArgument = parsedCode['argument']['name'];
     } else if(parsedCode['argument']['type'] ==='UnaryExpression'){
-        returnArgument=parsedCode['argument']['operator']+parsedCode['argument']['argument']['raw'];
+        returnArgument=UnaryExpressionFinder(parsedCode['argument']);
     } else{
         returnArgument = MemberExpressionArgumentFinder(parsedCode);
     }
@@ -154,7 +154,7 @@ const assigmentExpressionFinder= (parsedCode)=>
     else if(parsedCode['right']['type']==='Identifier'){
         rightName=parsedCode['right']['name'];
     } else if(parsedCode['right']['type'] ==='UnaryExpression'){
-        rightName=parsedCode['right']['operator']+parsedCode['right']['argument']['raw'];
+        rightName=UnaryExpressionFinder(parsedCode['right']);
     } else {
         rightName=parsedCode['right']['raw'];
     }
@@ -221,6 +221,16 @@ const MemberExpressionInitFinder=(parsedCode)=>{
     else{
         return parsedCode['init']['raw'];
     }
+};
+
+const MemberExpressionFinder=(parsedCode)=>{
+    if(parsedCode['property']['type']==='BinaryExpression')
+        return parsedCode['object']['name'] +'['+ binaryExpressionFinder(parsedCode['property'])+']';
+    else if(parsedCode['property']['type']==='Identifier')
+        return parsedCode['object']['name'] +'['+ parsedCode['property']['name']+']';
+    else
+        return parsedCode['object']['name'] +'['+ parsedCode['property']['raw']+']';
+
 };
 
 const binaryExpressionRightFinder2=(parsedCode)=>{
@@ -292,6 +302,19 @@ const variableDeclarationFinder=(variable)=>
     }
 };
 
+const UnaryExpressionFinder = (parsedCode) =>{
+    let value='';
+    if(parsedCode['argument']['type']==='BinaryExpression'){
+        value=parsedCode['operator']+'('+binaryExpressionFinder(parsedCode['argument'])+')';}
+    else if(parsedCode['argument']['type']==='Identifier'){
+        value=parsedCode['operator']+parsedCode['argument']['name'];
+    } else if(parsedCode['argument']['type'] ==='Literal'){
+        value=parsedCode['operator']+parsedCode['argument']['raw'];
+    } else {
+        value=parsedCode['operator']+MemberExpressionFinder(parsedCode['argument']);} // here
+    return value;
+};
+
 const oneVarDeclaration=(varDec)=>
 {
     var nameOftheVar=0,lineOftheVar=0,valueOftheVar='';
@@ -305,7 +328,7 @@ const oneVarDeclaration=(varDec)=>
         else if(varDec['init']['type']==='Identifier'){
             valueOftheVar=varDec['init']['name'];
         } else if(varDec['init']['type'] ==='UnaryExpression'){
-            valueOftheVar=varDec['init']['operator']+varDec['init']['argument']['raw'];
+            valueOftheVar=UnaryExpressionFinder(varDec['init']);
         } else {
             valueOftheVar=MemberExpressionInitFinder(varDec);} // here
     }
